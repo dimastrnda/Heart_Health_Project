@@ -44,6 +44,6 @@ if st.button('Predict'):
     result = pipe.predict(input_data)[0]
     st.subheader("Hasil Prediksi:")
     if result == 1:
-        st.error("⚠️ Anda berisiko mengalami penyakit jantung.")
+        st.error("Anda berisiko mengalami penyakit jantung.")
     else:
-        st.success("✅ Anda tidak berisiko mengalami penyakit jantung.")
+        st.success("Anda tidak berisiko mengalami penyakit jantung.")
