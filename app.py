@@ -1,17 +1,19 @@
 import streamlit as st
-import pandas as pd
 import pickle
+import pandas as pd
 
-# Load model
+# Load model dan fitur
 with open('pipe.pkl', 'rb') as f:
     pipe = pickle.load(f)
 
-# Load data untuk ambil nilai unik
+with open('features.pkl', 'rb') as f:
+    feature_columns = pickle.load(f)
+
 df = pd.read_csv("heart.csv")
 
 st.title("Heart Disease Predictor")
 
-# Input
+# Form input
 Age = st.number_input('Age', 1, 120, 30)
 Sex = st.selectbox('Sex', df['Sex'].unique())
 ChestPainType = st.selectbox('Chest Pain Type', df['ChestPainType'].unique())
@@ -24,25 +26,25 @@ ExerciseAngina = st.selectbox('ExerciseAngina', df['ExerciseAngina'].unique())
 Oldpeak = st.number_input('Oldpeak', format="%.2f")
 ST_Slope = st.selectbox('ST_Slope', df['ST_Slope'].unique())
 
-# Prediksi
+# Predict
 if st.button('Predict'):
-    input_data = pd.DataFrame({
-        'Age': [Age],
-        'Sex': [Sex],
-        'ChestPainType': [ChestPainType],
-        'RestingBP': [RestingBP],
-        'Cholesterol': [Cholesterol],
-        'FastingBS': [FastingBS],
-        'RestingECG': [RestingECG],
-        'MaxHR': [MaxHR],
-        'ExerciseAngina': [ExerciseAngina],
-        'Oldpeak': [Oldpeak],
-        'ST_Slope': [ST_Slope],
-    })
+    input_data = pd.DataFrame([{
+        'Age': Age,
+        'Sex': Sex,
+        'ChestPainType': ChestPainType,
+        'RestingBP': RestingBP,
+        'Cholesterol': Cholesterol,
+        'FastingBS': FastingBS,
+        'RestingECG': RestingECG,
+        'MaxHR': MaxHR,
+        'ExerciseAngina': ExerciseAngina,
+        'Oldpeak': Oldpeak,
+        'ST_Slope': ST_Slope
+    }])
+
+    # Ensure order & structure
+    input_data = input_data[feature_columns]
 
     result = pipe.predict(input_data)[0]
-    st.subheader("Prediction Result:")
-    if result == 1:
-        st.error("Risiko tinggi penyakit jantung.")
-    else:
-        st.success("Risiko rendah penyakit jantung.")
+    st.subheader("Hasil Prediksi:")
+    st.success("Tidak berisiko penyakit jantung." if result == 0 else "Berisiko penyakit jantung.")
