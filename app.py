@@ -55,14 +55,13 @@ if submitted:
         input_data = input_data[feature_columns]
 
         # Prediksi
+        prediction = pipe.predict(input_data)[0]
+        proba = pipe.predict_proba(input_data)[0][1] * 100
+
         if prediction == 1:
-            st.error(f"🚨 *Status: Berisiko Tinggi*")
-            st.write(f"Model mendeteksi adanya potensi risiko penyakit jantung dengan probabilitas *{proba:.2f}%*.")
+            st.error(f"Hasil prediksi: Berisiko penyakit jantung ({proba:.2f}% kemungkinan)")
         else:
-            # proba_rendah adalah kebalikan dari proba risiko
-            proba_rendah = 100 - proba
-            st.success(f"✅ *Status: Risiko Rendah*")
-            st.write(f"Anda teridentifikasi berada pada kategori risiko rendah dengan tingkat keyakinan *{proba_rendah:.2f}%*.")
+            st.success(f"Hasil prediksi: Tidak berisiko penyakit jantung ({proba:.2f}% kemungkinan)")
 
     except Exception as e:
         st.exception(f"Terjadi error saat prediksi: {e}")
